@@ -1,13 +1,16 @@
 package com.lcgt.instagramcloneparse;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.constraintlayout.widget.ConstraintLayout;
 
 import android.os.Bundle;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -22,6 +25,8 @@ public class MainActivity extends AppCompatActivity implements View.OnKeyListene
     EditText passwordEditText;
     Button authenticateButton;
     TextView actionTextView;
+    ConstraintLayout backgroundLayout;
+    ImageView logoImageView;
 
     public void authenticateUser(View view) {
         String username = usernameEditText.getText().toString();
@@ -87,6 +92,10 @@ public class MainActivity extends AppCompatActivity implements View.OnKeyListene
         }
     }
 
+    public void hideKeyboard(View view) {
+        InputMethodManager inputMethodManager = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
+        inputMethodManager.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -97,6 +106,8 @@ public class MainActivity extends AppCompatActivity implements View.OnKeyListene
         actionTextView = findViewById(R.id.actionTextView);
         usernameEditText = findViewById(R.id.usernameEditText);
         passwordEditText = findViewById(R.id.passwordEditText);
+        backgroundLayout = findViewById(R.id.backgroundLayout);
+        logoImageView = findViewById(R.id.logoImageView);
 
         passwordEditText.setOnKeyListener(this);
 

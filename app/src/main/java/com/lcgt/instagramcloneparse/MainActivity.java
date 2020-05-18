@@ -3,6 +3,7 @@ package com.lcgt.instagramcloneparse;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -45,6 +46,11 @@ public class MainActivity extends AppCompatActivity implements View.OnKeyListene
         }
     }
 
+    public void redirectToUsersList () {
+        Intent intent = new Intent(getApplicationContext(), UsersListActivity.class);
+        startActivity(intent);
+    }
+
     public void signupUser(String username, String password) {
         ParseUser user = new ParseUser();
         user.setUsername(username);
@@ -54,6 +60,7 @@ public class MainActivity extends AppCompatActivity implements View.OnKeyListene
             public void done(ParseException e) {
                 if(e == null) {
                     Log.i("Action", "Sign up successful!");
+                    redirectToUsersList();
                 } else {
                     Toast.makeText(getApplicationContext(), e.getMessage(), Toast.LENGTH_SHORT).show();
                     Log.i("Action", "Sign up error! " + e.getMessage());
@@ -68,7 +75,7 @@ public class MainActivity extends AppCompatActivity implements View.OnKeyListene
             public void done(ParseUser user, ParseException e) {
                 if(e == null) {
                     Log.i("Action", "Log in successful!");
-
+                    redirectToUsersList();
                 } else {
                     Toast.makeText(getApplicationContext(), e.getMessage(), Toast.LENGTH_SHORT).show();
                     Log.i("Action", "Log in error! " + e.getMessage());
@@ -94,14 +101,13 @@ public class MainActivity extends AppCompatActivity implements View.OnKeyListene
 
     public void hideKeyboard(View view) {
         InputMethodManager inputMethodManager = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
-        inputMethodManager.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
+
+        if(inputMethodManager.isAcceptingText()) {
+            inputMethodManager.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
+        }
     }
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-
+    public void initalizaeApplication() {
         authenticateButton = findViewById(R.id.authenticateButton);
         actionTextView = findViewById(R.id.actionTextView);
         usernameEditText = findViewById(R.id.usernameEditText);
@@ -114,6 +120,18 @@ public class MainActivity extends AppCompatActivity implements View.OnKeyListene
         action = "signup";
         authenticateButton.setText("Signup");
         actionTextView.setText("Or, Log in");
+    }
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+
+        if((ParseUser.getCurrentUser() != null)) {
+            redirectToUsersList();
+        } else {
+            initalizaeApplication();
+        }
     }
 
     @Override

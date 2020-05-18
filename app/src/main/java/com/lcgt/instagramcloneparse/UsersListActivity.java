@@ -1,25 +1,36 @@
 package com.lcgt.instagramcloneparse;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.widget.ArrayAdapter;
+import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import com.parse.FindCallback;
 import com.parse.ParseException;
+import com.parse.ParseFile;
+import com.parse.ParseObject;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
+import com.parse.SaveCallback;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -48,6 +59,53 @@ public class UsersListActivity extends AppCompatActivity {
             }
         } else {
             getPhoto();
+        }
+    }
+
+    public byte[] convertBitemapToByteArray(Bitmap bitmap) {
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        bitmap.compress(Bitmap.CompressFormat.PNG, 100, outputStream);
+        byte[] byteArray = outputStream.toByteArray();
+
+        return byteArray;
+    }
+
+    public void saveOnParse(ParseFile file, ParseUser user) {
+        ParseObject object = new ParseObject("Image");
+        object.put("image", file);
+        object.put("username", user.getUsername());
+
+
+        object.saveInBackground(new SaveCallback() {
+            @Override
+            public void done(ParseException e) {
+                if(e == null) {
+                    Toast.makeText(UsersListActivity.this, "Image saved!", Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(UsersListActivity.this, "Image could not be saved, please try again later.", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (requestCode == 1 && resultCode == RESULT_OK && data != null) {
+            Uri selectedImage = data.getData();
+
+            try {
+                Log.i("Photo", "Image gotten!");
+
+                Bitmap bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), selectedImage);
+                byte[] byteArray = convertBitemapToByteArray(bitmap);
+                ParseFile file = new ParseFile("image.png", byteArray);
+
+                saveOnParse(file, ParseUser.getCurrentUser());
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
     }
 

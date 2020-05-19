@@ -128,6 +128,8 @@ public class MainActivity extends AppCompatActivity implements View.OnKeyListene
         setContentView(R.layout.activity_main);
 
         if((ParseUser.getCurrentUser() != null)) {
+            Log.i("Current user", ParseUser.getCurrentUser().toString());
+
             redirectToUsersList();
         } else {
             initalizaeApplication();

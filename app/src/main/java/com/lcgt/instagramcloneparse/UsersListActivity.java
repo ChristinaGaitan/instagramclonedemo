@@ -16,6 +16,8 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.Toast;
@@ -146,6 +148,15 @@ public class UsersListActivity extends AppCompatActivity {
         ListView usersListView = findViewById(R.id.usersListView);
         final ArrayAdapter arrayAdapter = new ArrayAdapter(this, android.R.layout.simple_list_item_1, usersList);
         usersListView.setAdapter(arrayAdapter);
+        usersListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Intent intent = new Intent(getApplicationContext(), PhotosActivity.class);
+                String username = usersList.get(position);
+                intent.putExtra("username", username);
+                startActivity(intent);
+            }
+        });
 
 
         ParseQuery<ParseUser> usersQuery = ParseUser.getQuery();

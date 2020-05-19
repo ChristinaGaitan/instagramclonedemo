@@ -15,10 +15,10 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true">
+        <activity android:name=".PhotosActivity"></activity>
         <activity
             android:name=".UsersListActivity"
-            android:label="User feed"
-            ></activity>
+            android:label="User feed" />
         <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
